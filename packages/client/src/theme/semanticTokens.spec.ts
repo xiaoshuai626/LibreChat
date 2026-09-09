@@ -246,7 +246,7 @@ describe.each([
 /** The meter paints segments on `surface-tertiary`; the swatch and popover chrome
  *  sit on `surface-secondary`. Both have to clear the 3:1 mark-contrast floor. */
 const seriesTokens = Array.from(
-  { length: 7 },
+  { length: 8 },
   (_, index) => `rgb-series-${index + 1}` as keyof IThemeRGB,
 );
 const seriesSurfaces: Array<keyof IThemeRGB> = ['rgb-surface-tertiary', 'rgb-surface-secondary'];

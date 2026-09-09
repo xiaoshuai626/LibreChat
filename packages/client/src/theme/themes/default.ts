@@ -100,6 +100,8 @@ export const defaultTheme: IThemeRGB = {
   'rgb-series-5': '216 90 142', // #d85a8e (magenta)
   'rgb-series-6': '126 35 205', // #7e23cd (violet)
   'rgb-series-7': '1 131 1', // #018301 (green)
+  'rgb-series-8': '63 81 181', // #3f51b5 (indigo) — beside green(7), blue vs
+  /** green separates under protanopia/deuteranopia where red would not. */
 
   // Presentation
   'rgb-presentation': '255 255 255', // #fff (white)

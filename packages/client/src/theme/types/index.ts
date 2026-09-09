@@ -103,6 +103,7 @@ export interface IThemeRGB {
   'rgb-series-5'?: string;
   'rgb-series-6'?: string;
   'rgb-series-7'?: string;
+  'rgb-series-8'?: string;
 
   // Presentation
   'rgb-presentation'?: string;
@@ -193,6 +194,7 @@ export interface IThemeVariables {
   '--series-5': string;
   '--series-6': string;
   '--series-7': string;
+  '--series-8': string;
 
   '--presentation': string;
 }
@@ -276,6 +278,7 @@ export interface IThemeColors {
   'series-5'?: string;
   'series-6'?: string;
   'series-7'?: string;
+  'series-8'?: string;
   presentation?: string;
 
   // Retained for excluded SidePanel/Agents + SidePanel/Builder (pending migration)
