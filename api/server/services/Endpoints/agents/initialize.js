@@ -4,6 +4,7 @@ const {
   resolveSender,
   createConcurrencyLimiter,
   loadSkillStates,
+  resolveChatProjectContext,
   initializeAgent,
   primeInvokedSkillsForProfiles,
   validateAgentModel,
@@ -537,6 +538,30 @@ const initializeClient = async ({
   /** @type {Array<import('librechat-data-provider').TTokenUsageEvent>} */
   const usageEmitSink = [];
 
+  const requestedProjectId =
+    endpointOption.chatProjectId !== undefined
+      ? endpointOption.chatProjectId
+      : req.body?.chatProjectId;
+  const hasResolvedProjectContext = Object.prototype.hasOwnProperty.call(req, 'chatProjectContext');
+  const chatProjectContextPromise = hasResolvedProjectContext
+    ? Promise.resolve(req.chatProjectContext)
+    : requestConversationPromise.then((resolvedConversation) =>
+        resolveChatProjectContext(
+          {
+            userId: req.user.id,
+            tenantId: req.user.tenantId,
+            conversationId,
+            requestedProjectId,
+            resolvedConversation,
+          },
+          {
+            getConvo: db.getConvo,
+            getChatProject: db.getChatProject,
+            getFiles: db.getFiles,
+          },
+        ),
+      );
+
   const [
     memoryAvailable,
     accessibleSkillIds,
@@ -545,6 +570,7 @@ const initializeClient = async ({
     { skillStates, defaultActiveOnShare },
     { primaryAgent, modelsConfig },
     requestConversation,
+    chatProjectContext,
     toolRoleGrants,
   ] = await Promise.all([
     memoryAvailablePromise,
@@ -554,8 +580,12 @@ const initializeClient = async ({
     skillStatesPromise,
     validatedPrimaryAgentPromise,
     requestConversationPromise,
+    chatProjectContextPromise,
     toolRoleGrantsPromise,
   ]);
+  req.chatProjectContext = chatProjectContext;
+  req.chatProjectContextEnabled = true;
+
   delete endpointOption.agent;
 
   /** The deployment switch AND the role grant. `initializeAgent` rebuilds
@@ -616,7 +646,6 @@ const initializeClient = async ({
       primaryAgent.skills = resolvedSkillIds.map((id) => id.toString());
     }
   }
-
   const primaryScopedSkillIds = resolveAgentScopedSkillIds({
     agent: primaryAgent,
     accessibleSkillIds,
@@ -636,9 +665,9 @@ const initializeClient = async ({
     skillsCapabilityEnabled,
     ephemeralSkillsToggle,
   });
-
   const primaryConfig = await initializeAgent(
     {
+      useChatProjectContext: true,
       req,
       res,
       loadTools,
